@@ -1,0 +1,213 @@
+* {
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+}
+
+
+.uploader-container {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.drop-zone {
+  width: 300px;
+  height: 150px;
+  border: 2px dashed #999;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #666;
+  margin: 0 auto;
+  transition: border-color 0.3s, color 0.3s;
+}
+
+.drop-zone:hover {
+  border-color: #007bff;
+  color: #007bff;
+}
+
+/* Glassmorphism style */
+.audio-player {
+  margin-top: 20px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.1); /* Slight transparency */
+  border-radius: 15px;
+  backdrop-filter: blur(10px); /* Frosted glass effect */
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+}
+
+.waveform-container {
+  flex-grow: 1; /* This ensures the waveform container takes the remaining space */
+  margin-left: 20px;
+  max-width: 100%;
+}
+
+.play-button {
+  width: 50px;
+  height: 50px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.play-button img {
+  height: 100%;
+}
+
+.play-button:hover {
+  opacity: 0.8;
+}
+
+.enhancement-section {
+  display: block;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  color: white;
+  margin: 80px auto;
+  width: 60%;
+}
+
+.quality-options {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.radio-option {
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.slider-section {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.slider-section input[type="range"] {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.rate-labels {
+  display: flex;
+  justify-content: space-between;
+  width: 50%;
+  margin: 8px auto 0 auto;
+}
+
+
+.active-rate {
+  font-weight: bold;
+  color: #007bff;
+}
+
+.enhance-btn {
+  background: linear-gradient(135deg, #00b4d8, #007bff);
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.3s;
+  margin: 50px 0;
+}
+
+.enhance-btn:hover {
+  background: linear-gradient(135deg, #00d4ff, #007bff);
+}
+
+.radio-option {
+  position: relative;
+  padding: 10px 20px;
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid transparent;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  user-select: none;
+}
+
+.radio-option input[type="radio"] {
+  display: none;
+}
+
+.radio-option.selected {
+  background: #007bff;
+  border-color: #90e0ef;
+  color: black;
+  box-shadow: 0 0 10px #007bff;
+}
+
+.slider-section input[type="range"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 50%;
+  margin: 10px auto 0 auto;
+  display: block;
+  height: 10px;
+  border-radius: 5px;
+  background: linear-gradient(to right, #007bff, #007bff);
+  outline: none;
+  transition: background 0.3s ease;
+  box-shadow: 0 0 10px rgba(0, 180, 216, 0.3);
+}
+
+
+.slider-section input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  background: #ffffff;
+  border-radius: 50%;
+  border: 2px solid #007bff;
+  cursor: pointer;
+  box-shadow: 0 0 5px #007bff;
+  transition: transform 0.2s ease;
+}
+
+.slider-section input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.slider-section input[type="range"]::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  background: #ffffff;
+  border-radius: 50%;
+  border: 2px solid #007bff;
+  cursor: pointer;
+  box-shadow: 0 0 5px #007bff;
+  transition: transform 0.2s ease;
+}
+
+.slider-section input[type="range"]::-moz-range-thumb:hover {
+  transform: scale(1.2);
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.loading-gif {
+  width: 50px;
+  height: 50px;
+}
