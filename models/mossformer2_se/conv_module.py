@@ -321,7 +321,7 @@ class ConvModule_Dilated(nn.Module):
             expansion_factor: int = 2,
             dropout_p: float = 0.1,
     ) -> None:
-        super(ConvModule_Gating, self).__init__()
+        super(None, self).__init__()
         assert (kernel_size - 1) % 2 == 0, "kernel_size should be a odd number for 'SAME' padding"
         assert expansion_factor == 2, "Currently, Only Supports expansion_factor 2"
         self.sequential = nn.Sequential(
