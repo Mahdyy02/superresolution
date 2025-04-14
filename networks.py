@@ -4,7 +4,6 @@ import soundfile as sf
 import os
 import subprocess
 import librosa
-from tqdm import tqdm
 import numpy as np
 from pydub import AudioSegment
 from utils.decode import decode_one_audio
@@ -230,11 +229,11 @@ class SpeechModel:
                 os.makedirs(output_wave_dir)
         
         num_samples = len(data_reader)  # Get the total number of samples to process
-        print(f'Running {self.name} ...')  # Display the model being used
+        # print(f'Running {self.name} ...')  # Display the model being used
 
         # Disable gradient calculation for better efficiency during inference
         with torch.no_grad():
-            for idx in tqdm(range(num_samples)):  # Loop over all audio samples
+            for idx in range(num_samples):  # Loop over all audio samples
                 self.data = {}
                 # Read the audio, waveform ID, and audio length from the data reader
                 input_audio, wav_id, input_len, scalars, audio_info = data_reader[idx]
