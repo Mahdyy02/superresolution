@@ -1,7 +1,6 @@
 from network_wrapper import network_wrapper
-import os
-import warnings
-warnings.filterwarnings("ignore")
+# import warnings
+# warnings.filterwarnings("ignore")
 
 class ClearVoice:
     """ The main class inferface to the end users for performing speech processing

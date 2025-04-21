@@ -1,10 +1,10 @@
 from fastapi import FastAPI, Request, UploadFile, File, Form, HTTPException, BackgroundTasks
-from fastapi.responses import JSONResponse, FileResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from uuid import uuid4
 import os
 import shutil
 from fastapi.middleware.cors import CORSMiddleware
-from app.client import Client
+from client import Client
 from pydub import AudioSegment
 from fastapi.staticfiles import StaticFiles
 import asyncio
@@ -30,19 +30,32 @@ def download_file(filename: str):
     filepath = f"result/{filename}"
 
     if os.path.exists(filepath):
-        return FileResponse(
-            path=filepath,
-            filename=filename,
-            media_type='application/octet-stream',
+        session_id = filename.split("_")[-1].replace(".wav", "")
+        upload_dir = f"uploads/audio_{session_id}"
+
+        def file_streamer():
+            with open(filepath, mode="rb") as file_like:
+                yield from file_like
+            try:
+                if os.path.exists(filepath):
+                    os.remove(filepath)
+                if os.path.exists(upload_dir):
+                    shutil.rmtree(upload_dir)
+                print(f"[CLEANUP] Removed {filepath} and {upload_dir}")
+            except Exception as e:
+                print(f"[CLEANUP ERROR] {e}")
+
+        return StreamingResponse(
+            file_streamer(),
+            media_type="application/octet-stream",
             headers={"Content-Disposition": f"attachment; filename={filename}"}
         )
-    
-    session_id = filename.split("_")[-1].replace(".wav", "")
 
+    session_id = filename.split("_")[-1].replace(".wav", "")
     if session_id in active_sessions:
         return JSONResponse(status_code=202, content={"message": "The file is still being processed. Please try again shortly."})
 
-    return HTTPException(status_code=404, detail="File not found or enhancement failed.")
+    raise HTTPException(status_code=404, detail="File not found or enhancement failed.")
 
 @app.get("/status/{session_id}")
 async def check_status(session_id: str):
@@ -67,6 +80,16 @@ async def assign_session_id(request: Request, call_next):
 async def upload_audio(request: Request, file: UploadFile = File(...)):
     session_id = request.cookies.get("session_id")
     upload_dir = f"uploads/audio_{session_id}"
+    result_file = f"result/enhanced_audio_{session_id}.wav"
+
+    # Delete old result file if it exists
+    if os.path.exists(result_file):
+        os.remove(result_file)
+
+    # Clean up previous upload directory if it exists
+    if os.path.exists(upload_dir):
+        shutil.rmtree(upload_dir)
+
     os.makedirs(upload_dir, exist_ok=True)
 
     temp_path = os.path.join(upload_dir, file.filename)
@@ -84,6 +107,7 @@ async def upload_audio(request: Request, file: UploadFile = File(...)):
     except Exception as e:
         os.remove(temp_path)
         return JSONResponse(status_code=400, content={"error": "Unsupported audio format or conversion failed"})
+
 
 @app.post("/cancel")
 async def cancel_enhancement(request: Request):

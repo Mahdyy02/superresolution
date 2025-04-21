@@ -1,142 +1,218 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 * {
-  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
 }
 
+body {
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  color: #f8fafc;
+  min-height: 100vh;
+}
 
-.uploader-container {
+.app-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.header {
   text-align: center;
+  margin-bottom: 40px;
+}
+
+.header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  background: linear-gradient(90deg, #4A6CF7, #0EA5E9);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: #94a3b8;
+  font-weight: 400;
+}
+
+.upload-section {
+  display: flex;
+  justify-content: center;
   margin-top: 40px;
 }
 
 .drop-zone {
-  width: 300px;
-  height: 150px;
-  border: 2px dashed #999;
-  border-radius: 8px;
+  width: 450px;
+  height: 250px;
+  border: 2px dashed #475569;
+  border-radius: 16px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: #666;
-  margin: 0 auto;
-  transition: border-color 0.3s, color 0.3s;
+  padding: 30px;
+  background-color: rgba(30, 41, 59, 0.5);
+  transition: all 0.3s ease;
 }
 
 .drop-zone:hover {
-  border-color: #007bff;
-  color: #007bff;
+  border-color: #4A6CF7;
+  background-color: rgba(30, 41, 59, 0.8);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
-/* Glassmorphism style */
-.audio-player {
-  margin-top: 20px;
-  text-align: center;
-  background: rgba(255, 255, 255, 0.1); /* Slight transparency */
-  border-radius: 15px;
-  backdrop-filter: blur(10px); /* Frosted glass effect */
-  padding: 20px;
-  max-width: 600px;
-  margin: 0 auto;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+.upload-icon {
+  color: #4A6CF7;
+  margin-bottom: 20px;
+}
+
+.upload-text {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-bottom: 10px;
+  color: #e2e8f0;
+}
+
+.upload-hint {
+  font-size: 0.9rem;
+  color: #94a3b8;
+}
+
+.workflow-container {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.workflow-section {
+  background: rgba(30, 41, 59, 0.5);
+  border-radius: 16px;
+  padding: 24px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.workflow-section:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.section-header h2 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #e2e8f0;
+}
+
+.file-info {
   display: flex;
   align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background-color: rgba(71, 85, 105, 0.3);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #94a3b8;
 }
 
-.waveform-container {
-  flex-grow: 1; /* This ensures the waveform container takes the remaining space */
-  margin-left: 20px;
-  max-width: 100%;
+.file-name {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.audio-player {
+  display: flex;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.3);
+  border-radius: 12px;
+  padding: 20px;
+  gap: 15px;
 }
 
 .play-button {
-  width: 50px;
-  height: 50px;
+  min-width: 48px;
+  height: 48px;
   border: none;
-  background: transparent;
+  border-radius: 50%;
+  background: rgba(74, 108, 247, 0.15);
+  color: #4A6CF7;
   cursor: pointer;
-}
-
-.play-button img {
-  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
 }
 
 .play-button:hover {
-  opacity: 0.8;
+  background: rgba(74, 108, 247, 0.25);
+  transform: scale(1.05);
 }
 
-.enhancement-section {
-  display: block;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 20px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-  color: white;
-  margin: 80px auto;
-  width: 60%;
+.waveform-container {
+  flex-grow: 1;
+}
+
+.enhanced-player .play-button {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10B981;
+}
+
+.enhanced-player .play-button:hover {
+  background: rgba(16, 185, 129, 0.25);
+}
+
+.enhancement-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.setting-group {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.setting-group h3 {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #cbd5e1;
+}
+
+.rate-value {
+  color: #4A6CF7;
+  font-weight: 600;
 }
 
 .quality-options {
   display: flex;
-  gap: 20px;
-  justify-content: center;
-  margin-bottom: 20px;
+  gap: 15px;
 }
 
 .radio-option {
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-}
-
-.slider-section {
+  flex: 1;
   text-align: center;
-  margin-bottom: 20px;
-}
-
-.slider-section input[type="range"] {
-  width: 100%;
-  margin-top: 10px;
-}
-
-.rate-labels {
-  display: flex;
-  justify-content: space-between;
-  width: 50%;
-  margin: 8px auto 0 auto;
-}
-
-
-.active-rate {
-  font-weight: bold;
-  color: #007bff;
-}
-
-.enhance-btn {
-  background: linear-gradient(135deg, #00b4d8, #007bff);
-  color: white;
-  padding: 12px 24px;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background 0.3s;
-  margin: 50px 0;
-}
-
-.enhance-btn:hover {
-  background: linear-gradient(135deg, #00d4ff, #007bff);
-}
-
-.radio-option {
-  position: relative;
-  padding: 10px 20px;
-  border-radius: 30px;
-  background: rgba(255, 255, 255, 0.1);
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(71, 85, 105, 0.2);
   border: 2px solid transparent;
-  color: white;
+  color: #cbd5e1;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -147,38 +223,39 @@
   display: none;
 }
 
+.radio-option:hover {
+  background: rgba(71, 85, 105, 0.3);
+}
+
 .radio-option.selected {
-  background: #007bff;
-  border-color: #90e0ef;
-  color: black;
-  box-shadow: 0 0 10px #007bff;
+  background: rgba(74, 108, 247, 0.15);
+  border-color: #4A6CF7;
+  color: #4A6CF7;
+}
+
+.slider-section {
+  margin: 10px 0;
 }
 
 .slider-section input[type="range"] {
   appearance: none;
-  -webkit-appearance: none;
-  width: 50%;
-  margin: 10px auto 0 auto;
-  display: block;
-  height: 10px;
-  border-radius: 5px;
-  background: linear-gradient(to right, #007bff, #007bff);
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(to right, #4A6CF7, #0EA5E9);
   outline: none;
-  transition: background 0.3s ease;
-  box-shadow: 0 0 10px rgba(0, 180, 216, 0.3);
+  margin: 10px 0;
 }
 
-
 .slider-section input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
   appearance: none;
-  width: 22px;
-  height: 22px;
-  background: #ffffff;
+  width: 18px;
+  height: 18px;
+  background: #f8fafc;
   border-radius: 50%;
-  border: 2px solid #007bff;
+  border: 2px solid #4A6CF7;
   cursor: pointer;
-  box-shadow: 0 0 5px #007bff;
+  box-shadow: 0 0 5px rgba(74, 108, 247, 0.5);
   transition: transform 0.2s ease;
 }
 
@@ -187,13 +264,13 @@
 }
 
 .slider-section input[type="range"]::-moz-range-thumb {
-  width: 22px;
-  height: 22px;
-  background: #ffffff;
+  width: 18px;
+  height: 18px;
+  background: #f8fafc;
   border-radius: 50%;
-  border: 2px solid #007bff;
+  border: 2px solid #4A6CF7;
   cursor: pointer;
-  box-shadow: 0 0 5px #007bff;
+  box-shadow: 0 0 5px rgba(74, 108, 247, 0.5);
   transition: transform 0.2s ease;
 }
 
@@ -201,13 +278,150 @@
   transform: scale(1.2);
 }
 
+.rate-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+.active-rate {
+  color: #4A6CF7;
+  font-weight: 600;
+}
+
+.enhance-btn {
+  background: linear-gradient(135deg, #4A6CF7, #0EA5E9);
+  color: white;
+  padding: 14px 24px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+  align-self: center;
+}
+
+.enhance-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(74, 108, 247, 0.3);
+}
+
+.enhance-btn:disabled {
+  background: linear-gradient(135deg, #64748b, #94a3b8);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.download-btn {
+  background: linear-gradient(135deg, #10B981, #059669);
+  color: white;
+  padding: 14px 24px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+  margin-top: 24px;
+  align-self: center;
+  width: fit-content;
+  margin: 24px auto 0;
+}
+
+.download-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+}
+
 .loading-container {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  padding: 40px;
+  background: rgba(30, 41, 59, 0.5);
+  border-radius: 16px;
+  text-align: center;
 }
 
-.loading-gif {
-  width: 50px;
-  height: 50px;
+.loading-spinner {
+  width: 60px;
+  height: 60px;
+  border: 5px solid rgba(74, 108, 247, 0.3);
+  border-radius: 50%;
+  border-top-color: #4A6CF7;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+.loading-text {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #e2e8f0;
+  margin-bottom: 8px;
+}
+
+.loading-subtext {
+  font-size: 0.9rem;
+  color: #94a3b8;
+}
+
+.result-section {
+  border: 2px solid rgba(16, 185, 129, 0.3);
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 768px) {
+  .app-container {
+    padding: 20px 16px;
+  }
+  
+  .header h1 {
+    font-size: 2rem;
+  }
+  
+  .drop-zone {
+    width: 100%;
+    height: 200px;
+  }
+  
+  .quality-options {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .radio-option {
+    padding: 10px;
+  }
+  
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .file-info {
+    width: 100%;
+  }
 }

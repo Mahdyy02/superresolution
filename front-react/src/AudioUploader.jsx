@@ -20,6 +20,7 @@ const AudioUploader = () => {
   const enhancedWavesurfer = useRef(null);
   const [isEnhancedPlaying, setIsEnhancedPlaying] = useState(false);
   const [isEnhancing, setIsEnhancing] = useState(false);
+  const [fileName, setFileName] = useState('');
 
   useEffect(() => {
     setRateIndex(rateOptions.indexOf(samplingRate));
@@ -33,11 +34,14 @@ const AudioUploader = () => {
   
       wavesurfer.current = WaveSurfer.create({
         container: waveRef.current,
-        waveColor: '#ccc',
-        progressColor: '#007bff',
+        waveColor: '#4A6CF7',
+        progressColor: '#0EA5E9',
         height: 80,
         responsive: true,
         barWidth: 2,
+        barGap: 3,
+        barRadius: 2,
+        cursorColor: '#0EA5E9',
       });
   
       wavesurfer.current.load(URL.createObjectURL(audioFile));
@@ -57,6 +61,7 @@ const AudioUploader = () => {
   const handleFile = (file) => {
     if (file && file.type.startsWith('audio/')) {
       setAudioFile(file);
+      setFileName(file.name);
   
       const formData = new FormData();
       formData.append('file', file);
@@ -84,11 +89,14 @@ const AudioUploader = () => {
   
       enhancedWavesurfer.current = WaveSurfer.create({
         container: enhancedWaveRef.current,
-        waveColor: '#ccc',
-        progressColor: '#28a745',
+        waveColor: '#10B981',
+        progressColor: '#059669',
         height: 80,
         responsive: true,
         barWidth: 2,
+        barGap: 3,
+        barRadius: 2,
+        cursorColor: '#059669',
       });
   
       const url = URL.createObjectURL(enhancedAudioBlob);
@@ -242,120 +250,178 @@ const AudioUploader = () => {
   };
         
   return (
-    <div className="uploader-container">
+    <div className="app-container">
+      <div className="header">
+        <h1>Audio Enhancer</h1>
+        <p className="subtitle">Improve your audio quality with AI-powered enhancement</p>
+      </div>
+
       {!audioFile ? (
-        <div
-          className="drop-zone"
-          onClick={() => fileInputRef.current.click()}
-          onDrop={handleDrop}
-          onDragOver={(e) => e.preventDefault()}
-        >
-          <p>Click or drag an audio file here</p>
-          <input
-            type="file"
-            accept="audio/*"
-            ref={fileInputRef}
-            onChange={handleChange}
-            style={{ display: 'none' }}
-          />
+        <div className="upload-section">
+          <div
+            className="drop-zone"
+            onClick={() => fileInputRef.current.click()}
+            onDrop={handleDrop}
+            onDragOver={(e) => e.preventDefault()}
+          >
+            <div className="upload-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+            </div>
+            <p className="upload-text">Click or drag an audio file here</p>
+            <p className="upload-hint">Supported formats: MP3, WAV, FLAC, OGG</p>
+            <input
+              type="file"
+              accept="audio/*"
+              ref={fileInputRef}
+              onChange={handleChange}
+              style={{ display: 'none' }}
+            />
+          </div>
         </div>
       ) : (
-        <>
-          <div className="audio-player">
-            <button onClick={togglePlay} className="play-button">
-              <img
-                src={isPlaying ? pauseImage : playImage}
-                alt={isPlaying ? 'Pause' : 'Play'}
-              />
-            </button>
-
-            <div ref={waveRef} className="waveform-container" />
-          </div>
-
-          <div className="enhancement-section">
-            <h3>Select Quality</h3>
-            <div className="quality-options">
-              {['Good', 'Excellent', 'Perfect'].map((option) => (
-                <label
-                  key={option}
-                  className={`radio-option ${selectedQuality === option ? 'selected' : ''}`}
-                >
-                  <input
-                    type="radio"
-                    name="quality"
-                    value={option}
-                    checked={selectedQuality === option}
-                    onChange={() => setSelectedQuality(option)}
-                  />
-                  {option}
-                </label>
-              ))}
-            </div>
-
-            <div className="slider-section">
-              <h3>Output Sampling Rate: {samplingRate} Hz</h3>
-              <input
-                type="range"
-                min={0}
-                max={4}
-                step={1}
-                value={rateIndex}
-                onChange={(e) => {
-                  const idx = parseInt(e.target.value);
-                  setRateIndex(idx);
-                  setSamplingRate(rateOptions[idx]);
-                }}
-              />
-              <div className="rate-labels">
-                {rateOptions.map((rate, idx) => (
-                  <span key={rate} className={idx === rateIndex ? 'active-rate' : ''}>{rate}</span>
-                ))}
+        <div className="workflow-container">
+          <div className="workflow-section">
+            <div className="section-header">
+              <h2>1. Original Audio</h2>
+              <div className="file-info">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 18.5v.5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2"></path>
+                  <path d="M15 2H6a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h13a2 2 0 0 0 2-2v-9"></path>
+                  <path d="M15 2v6h6"></path>
+                </svg>
+                <span className="file-name">{fileName}</span>
               </div>
             </div>
 
-            <button className="enhance-btn" onClick={handleEnhance}>
-              Enhance
-            </button>
+            <div className="audio-player">
+              <button onClick={togglePlay} className="play-button">
+                {isPlaying ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="6" y="4" width="4" height="16"></rect>
+                    <rect x="14" y="4" width="4" height="16"></rect>
+                  </svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                  </svg>
+                )}
+              </button>
+              <div ref={waveRef} className="waveform-container" />
+            </div>
+          </div>
 
-            {enhancedAudioBlob && (
-              <>
-                <div className="audio-player">
-                  <button onClick={toggleEnhancedPlay} className="play-button">
-                    <img
-                      src={isEnhancedPlaying ? pauseImage : playImage}
-                      alt={isEnhancedPlaying ? 'Pause' : 'Play'}
-                    />
-                  </button>
-                  <div ref={enhancedWaveRef} className="waveform-container" />
+          <div className="workflow-section">
+            <div className="section-header">
+              <h2>2. Enhancement Settings</h2>
+            </div>
+
+            <div className="enhancement-settings">
+              <div className="setting-group">
+                <h3>Quality Level</h3>
+                <div className="quality-options">
+                  {['Good', 'Excellent', 'Perfect'].map((option) => (
+                    <label
+                      key={option}
+                      className={`radio-option ${selectedQuality === option ? 'selected' : ''}`}
+                    >
+                      <input
+                        type="radio"
+                        name="quality"
+                        value={option}
+                        checked={selectedQuality === option}
+                        onChange={() => setSelectedQuality(option)}
+                      />
+                      {option}
+                    </label>
+                  ))}
                 </div>
-
-                <button
-                  onClick={() => {
-                    const url = window.URL.createObjectURL(enhancedAudioBlob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'enhanced_audio.wav';
-                    document.body.appendChild(a);
-                    a.click();
-                    a.remove();
-                    window.URL.revokeObjectURL(url);
-                  }}
-                  className="enhance-btn"
-                >
-                  Download Enhanced Audio
-                </button>
-              </>
-            )}
-
-            {isEnhancing && (
-              <div className="loading-container">
-                <img src="src\loading.gif" alt="Enhancing..." className="loading-gif" />
-                <p>Enhancing audio...</p>
               </div>
-            )}
 
+              <div className="setting-group">
+                <h3>Output Sampling Rate: <span className="rate-value">{samplingRate} Hz</span></h3>
+                <div className="slider-section">
+                  <input
+                    type="range"
+                    min={0}
+                    max={4}
+                    step={1}
+                    value={rateIndex}
+                    onChange={(e) => {
+                      const idx = parseInt(e.target.value);
+                      setRateIndex(idx);
+                      setSamplingRate(rateOptions[idx]);
+                    }}
+                  />
+                  <div className="rate-labels">
+                    {rateOptions.map((rate, idx) => (
+                      <span key={rate} className={idx === rateIndex ? 'active-rate' : ''}>{rate}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <button className="enhance-btn" onClick={handleEnhance} disabled={isEnhancing}>
+                {isEnhancing ? 'Enhancing...' : 'Enhance Audio'}
+              </button>
+            </div>
           </div>
-        </>
+
+          {isEnhancing && (
+            <div className="loading-container">
+              <div className="loading-spinner"></div>
+              <p className="loading-text">Enhancing your audio...</p>
+              <p className="loading-subtext">This may take a moment depending on file size and selected quality</p>
+            </div>
+          )}
+
+          {enhancedAudioBlob && (
+            <div className="workflow-section result-section">
+              <div className="section-header">
+                <h2>3. Enhanced Audio</h2>
+              </div>
+              <div className="audio-player enhanced-player">
+                <button onClick={toggleEnhancedPlay} className="play-button">
+                  {isEnhancedPlaying ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="6" y="4" width="4" height="16"></rect>
+                      <rect x="14" y="4" width="4" height="16"></rect>
+                    </svg>
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    </svg>
+                  )}
+                </button>
+                <div ref={enhancedWaveRef} className="waveform-container" />
+              </div>
+
+              <button
+                onClick={() => {
+                  const url = window.URL.createObjectURL(enhancedAudioBlob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = 'enhanced_' + fileName || 'enhanced_audio.wav';
+                  document.body.appendChild(a);
+                  a.click();
+                  a.remove();
+                  window.URL.revokeObjectURL(url);
+                }}
+                className="download-btn"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Download Enhanced Audio
+              </button>
+            </div>
+          )}
+        </div>
       )}
     </div>
   );

@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./app
+    container_name: fastapi_app
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/app
+    restart: always
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  frontend:
+    build: ./front-react
+    container_name: vite_react_app
+    ports:
+      - "3000:80"
+    restart: always

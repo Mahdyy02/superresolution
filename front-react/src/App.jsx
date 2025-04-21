@@ -8,7 +8,6 @@ window.addEventListener("beforeunload", () => {
 const App = () => {
   return (
     <div>
-      <h1 style={{ textAlign: 'center' }}>SuperResolution</h1>
       <AudioUploader />
     </div>
   );
