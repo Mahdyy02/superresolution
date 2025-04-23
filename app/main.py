@@ -8,16 +8,21 @@ from client import Client
 from pydub import AudioSegment
 from fastapi.staticfiles import StaticFiles
 import asyncio
+import uuid
 
 enhance_semaphore = asyncio.Semaphore(5)
 active_sessions: dict[str, asyncio.Event] = {}
 lock = asyncio.Lock()
- 
+
+ALLOWED_EXTENSIONS = {".wav", ".mp3", ".flac", ".ogg", ".m4a"}
+ALLOWED_MIME_TYPES = {"audio/wav", "audio/x-wav", "audio/mpeg", "audio/flac", "audio/ogg", "audio/mp4"}
+frontend_url = os.getenv("FRONTEND_URL", "http://127.0.0.1:3000") 
+
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], 
+    allow_origins=[frontend_url], 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -72,9 +77,18 @@ async def assign_session_id(request: Request, call_next):
     session_id = request.cookies.get("session_id")
     if not session_id:
         session_id = str(uuid4())
+    request.state.session_id = session_id
     response = await call_next(request)
     response.set_cookie("session_id", session_id)
     return response
+
+
+@app.middleware("http")
+async def limit_upload_size(request: Request, call_next):
+    max_size = 10 * 1024 * 1024
+    if int(request.headers.get("content-length", 0)) > max_size:
+        return JSONResponse(status_code=413, content={"error": "File too large"})
+    return await call_next(request)
 
 @app.post("/upload")
 async def upload_audio(request: Request, file: UploadFile = File(...)):
@@ -82,32 +96,39 @@ async def upload_audio(request: Request, file: UploadFile = File(...)):
     upload_dir = f"uploads/audio_{session_id}"
     result_file = f"result/enhanced_audio_{session_id}.wav"
 
-    # Delete old result file if it exists
+    ext = os.path.splitext(file.filename)[1].lower()
+    if ext not in ALLOWED_EXTENSIONS or file.content_type not in ALLOWED_MIME_TYPES:
+        return JSONResponse(status_code=400, content={"error": "Unsupported file type"})
+
     if os.path.exists(result_file):
         os.remove(result_file)
-
-    # Clean up previous upload directory if it exists
     if os.path.exists(upload_dir):
         shutil.rmtree(upload_dir)
-
     os.makedirs(upload_dir, exist_ok=True)
 
-    temp_path = os.path.join(upload_dir, file.filename)
-    with open(temp_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+    safe_name = f"audio_{uuid.uuid4().hex}{ext}"
+    temp_path = os.path.join(upload_dir, safe_name)
 
     try:
+        with open(temp_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+
         audio = AudioSegment.from_file(temp_path)
+        
+        if audio.channels > 1:
+            audio = audio.set_channels(1)
+
         wav_path = os.path.join(upload_dir, f"audio_{session_id}.wav")
         audio.export(wav_path, format="wav")
 
         os.remove(temp_path)
 
         return JSONResponse(content={"message": "Upload and conversion successful", "filename": f"audio_{session_id}.wav"})
-    except Exception as e:
-        os.remove(temp_path)
-        return JSONResponse(status_code=400, content={"error": "Unsupported audio format or conversion failed"})
 
+    except Exception as e:
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
+        return JSONResponse(status_code=400, content={"error": "Invalid or unsupported audio file"})
 
 @app.post("/cancel")
 async def cancel_enhancement(request: Request):

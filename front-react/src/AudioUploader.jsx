@@ -209,7 +209,7 @@ const AudioUploader = () => {
       const downloadUrl = `http://localhost:8000${data.download_url}`;
   
       const checkStatus = async () => {
-        const maxTries = 1000;
+        const maxTries = 3000;
         let tries = 0;
   
         console.log("Polling status at:", statusUrl);
