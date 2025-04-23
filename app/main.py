@@ -22,10 +22,10 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[frontend_url], 
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=["http://127.0.0.1:3000"],  
+    allow_credentials=True,  
+    allow_methods=["GET", "POST", "OPTIONS"],  
+    allow_headers=["*"],  
 )
 
 app.mount("/result", StaticFiles(directory="result"), name="result")
@@ -62,6 +62,7 @@ def download_file(filename: str):
 
     raise HTTPException(status_code=404, detail="File not found or enhancement failed.")
 
+
 @app.get("/status/{session_id}")
 async def check_status(session_id: str):
     filepath = f"result/enhanced_audio_{session_id}.wav"
@@ -75,24 +76,57 @@ async def check_status(session_id: str):
 @app.middleware("http")
 async def assign_session_id(request: Request, call_next):
     session_id = request.cookies.get("session_id")
+
     if not session_id:
         session_id = str(uuid4())
     request.state.session_id = session_id
     response = await call_next(request)
-    response.set_cookie("session_id", session_id)
+    # Set cookie with correct attributes
+    response.set_cookie(
+        key="session_id",
+        value=session_id,
+        domain="127.0.0.1",
+        path="/",
+        samesite="lax",
+        secure=False,  
+        httponly=True, 
+    )
+
     return response
 
-
-@app.middleware("http")
-async def limit_upload_size(request: Request, call_next):
-    max_size = 10 * 1024 * 1024
-    if int(request.headers.get("content-length", 0)) > max_size:
-        return JSONResponse(status_code=413, content={"error": "File too large"})
-    return await call_next(request)
+@app.get("/init-session")
+async def init_session(request: Request):
+    try:
+        # Get existing session_id or create a new one
+        session_id = request.cookies.get("session_id")
+        if not session_id:
+            session_id = str(uuid.uuid4())
+        
+        # Create response
+        response = JSONResponse(content={"session_id": session_id})
+        
+        # Set cookie with correct attributes
+        response.set_cookie(
+            key="session_id",
+            value=session_id,
+            domain="127.0.0.1",  # Match frontend/backend IP
+            path="/",
+            samesite="lax",  # Use 'lax' for HTTP localhost
+            secure=False,  # HTTP on localhost
+            httponly=True,  # Prevent JavaScript access for security
+        )
+        
+        return response
+    except Exception as e:
+        # Log error for debugging
+        print(f"Error in init_session: {str(e)}")
+        raise
 
 @app.post("/upload")
 async def upload_audio(request: Request, file: UploadFile = File(...)):
+
     session_id = request.cookies.get("session_id")
+
     upload_dir = f"uploads/audio_{session_id}"
     result_file = f"result/enhanced_audio_{session_id}.wav"
 

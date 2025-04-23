@@ -2,9 +2,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import WaveSurfer from 'wavesurfer.js';
 import './AudioUploader.css';
 
-import playImage from './assets/play.png';
-import pauseImage from './assets/pause.png';
-
 const AudioUploader = () => {
   const [audioFile, setAudioFile] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -21,6 +18,21 @@ const AudioUploader = () => {
   const [isEnhancedPlaying, setIsEnhancedPlaying] = useState(false);
   const [isEnhancing, setIsEnhancing] = useState(false);
   const [fileName, setFileName] = useState('');
+
+  useEffect(() => {
+    fetch('http://127.0.0.1:8000/init-session', {
+      method: 'GET',
+      credentials: 'include',
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => console.log(data))
+      .catch(error => console.error('Error:', error));
+  }, []);
 
   useEffect(() => {
     setRateIndex(rateOptions.indexOf(samplingRate));
@@ -66,7 +78,7 @@ const AudioUploader = () => {
       const formData = new FormData();
       formData.append('file', file);
   
-      fetch('http://localhost:8000/upload', {
+      fetch('http://127.0.0.1:8000/upload', {
         method: 'POST',
         body: formData,
         credentials: 'include',
@@ -185,7 +197,7 @@ const AudioUploader = () => {
   
     try {
       console.log("Sending enhancement request to backend...");
-      const response = await fetch('http://localhost:8000/enhance', {
+      const response = await fetch('http://127.0.0.1:8000/enhance', {
         method: 'POST',
         body: formData,
         credentials: 'include',
@@ -205,8 +217,8 @@ const AudioUploader = () => {
         throw new Error("Incomplete response from server. Missing check_status_url or download_url.");
       }
   
-      const statusUrl = `http://localhost:8000${data.check_status_url}`;
-      const downloadUrl = `http://localhost:8000${data.download_url}`;
+      const statusUrl = `http://127.0.0.1:8000${data.check_status_url}`;
+      const downloadUrl = `http://127.0.0.1:8000${data.download_url}`;
   
       const checkStatus = async () => {
         const maxTries = 3000;
