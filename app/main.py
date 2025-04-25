@@ -9,14 +9,19 @@ from pydub import AudioSegment
 from fastapi.staticfiles import StaticFiles
 import asyncio
 import uuid
+from dotenv import load_dotenv
 
 enhance_semaphore = asyncio.Semaphore(5)
 active_sessions: dict[str, asyncio.Event] = {}
 lock = asyncio.Lock()
+load_dotenv()
 
 ALLOWED_EXTENSIONS = {".wav", ".mp3", ".flac", ".ogg", ".m4a"}
 ALLOWED_MIME_TYPES = {"audio/wav", "audio/x-wav", "audio/mpeg", "audio/flac", "audio/ogg", "audio/mp4"}
+
 frontend_url = os.getenv("FRONTEND_URL", "http://127.0.0.1:3000") 
+domain = frontend_url.split("//")[-1].split(":")[0]  
+if ":" in domain: domain = domain.split(":")[0]  
 
 app = FastAPI()
 
@@ -85,7 +90,7 @@ async def assign_session_id(request: Request, call_next):
     response.set_cookie(
         key="session_id",
         value=session_id,
-        domain="127.0.0.1",
+        domain=domain,
         path="/",
         samesite="lax",
         secure=False,  
@@ -109,7 +114,7 @@ async def init_session(request: Request):
         response.set_cookie(
             key="session_id",
             value=session_id,
-            domain="127.0.0.1",  # Match frontend/backend IP
+            domain=domain,  # Match frontend/backend IP
             path="/",
             samesite="lax",  # Use 'lax' for HTTP localhost
             secure=False,  # HTTP on localhost
@@ -187,6 +192,14 @@ async def enhance_audio(
     if not session_id:
         return {"error": "No session ID found in cookies"}
     
+    input_path = f"uploads/audio_{session_id}/audio_{session_id}.wav"
+
+    if not os.path.exists(input_path):
+        raise HTTPException(
+            status_code=400,
+            detail="Audio file not found. Please upload a file before requesting enhancement."
+        )
+    
     output_filepath = f"result/enhanced_audio_{session_id}.wav"
     if os.path.exists(output_filepath):
 
@@ -196,7 +209,6 @@ async def enhance_audio(
             "download_url": f"/result/enhanced_audio_{session_id}.wav"
         }
 
-    input_path = f"uploads/audio_{session_id}/audio_{session_id}.wav"
     quality = quality.lower()
 
     if session_id in active_sessions:

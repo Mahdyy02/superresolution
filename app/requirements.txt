@@ -36,6 +36,7 @@ demucs==4.0.1
 denoiser==0.1.5
 dill==0.3.8
 dora_search==0.1.12
+dotenv==0.9.9
 einops==0.8.1
 executing==2.2.0
 fastapi==0.115.12
