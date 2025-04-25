@@ -19,7 +19,34 @@ const AudioUploader = () => {
   const enhancedWavesurfer = useRef(null);
   const [isEnhancedPlaying, setIsEnhancedPlaying] = useState(false);
   const [isEnhancing, setIsEnhancing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [fileName, setFileName] = useState('');
+
+  useEffect(() => {
+    let isMounted = true;
+    const interval = setInterval(async () => {
+      try {
+        const response = await fetch(`${API_URL}/is-loaded`, {
+          credentials: 'include',
+        });
+        const data = await response.json();
+  
+        if (data.ready && isMounted) {
+          setIsLoading(false);
+          clearInterval(interval);
+        }
+      } catch (err) {
+        console.error("Error checking is-loaded:", err);
+        clearInterval(interval);
+      }
+    }, 2000);
+  
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, []);
+  
 
   useEffect(() => {
     fetch(`${API_URL}/init-session`, {
@@ -88,6 +115,7 @@ const AudioUploader = () => {
         .then(res => res.json())
         .then(data => {
           console.log("Upload successful:", data);
+          setIsLoading(true);
         })
         .catch(err => {
           console.error("Upload failed:", err);
@@ -186,6 +214,8 @@ const AudioUploader = () => {
   
     setEnhancedAudioBlob(null);
     setIsEnhancedPlaying(false);
+
+    setIsLoading(false);
     setIsEnhancing(true);
   
     const formData = new FormData();
@@ -210,6 +240,13 @@ const AudioUploader = () => {
         const text = await response.text();
         console.error("Server responded with an error page:", text);
         throw new Error(`Server error (${response.status})`);
+      }
+
+      if (response.status === 400) {
+        alert("Upload is still in progress. Please wait until it's done before enhancing.");
+        setIsEnhancing(false);
+        setIsLoading(true);
+        return;
       }
   
       const data = await response.json();
@@ -378,7 +415,7 @@ const AudioUploader = () => {
                 </div>
               </div>
 
-              <button className="enhance-btn" onClick={handleEnhance} disabled={isEnhancing}>
+              <button className="enhance-btn" onClick={handleEnhance} disabled={isEnhancing||isLoading}>
                 {isEnhancing ? 'Enhancing...' : 'Enhance Audio'}
               </button>
             </div>
@@ -391,6 +428,8 @@ const AudioUploader = () => {
               <p className="loading-subtext">This may take a moment depending on file size and selected quality</p>
             </div>
           )}
+
+          {isLoading && <div className="loading-message">⏳ Enhancement is in progress, please wait...</div>}
 
           {enhancedAudioBlob && (
             <div className="workflow-section result-section">

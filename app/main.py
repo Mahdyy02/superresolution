@@ -234,3 +234,17 @@ async def enhance_audio(
         "check_status_url": f"/status/{session_id}",
         "download_url": f"/result/enhanced_audio_{session_id}.wav"
     }
+
+@app.get("/is-loaded")
+async def is_audio_loaded(request: Request):
+    session_id = request.cookies.get("session_id")
+    if not session_id:
+        return JSONResponse(status_code=400, content={"ready": False, "error": "No session ID in cookies"})
+
+    input_path = f"uploads/audio_{session_id}/audio_{session_id}.wav"
+    file_exists = os.path.exists(input_path)
+
+    if file_exists:
+        return {"ready": True}
+    else:
+        return {"ready": False}
