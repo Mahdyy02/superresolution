@@ -17,7 +17,7 @@ lock = asyncio.Lock()
 load_dotenv()
 
 ALLOWED_EXTENSIONS = {".wav", ".mp3", ".flac", ".ogg", ".m4a"}
-ALLOWED_MIME_TYPES = {"audio/wav", "audio/x-wav", "audio/mpeg", "audio/flac", "audio/ogg", "audio/mp4"}
+ALLOWED_MIME_TYPES = {"audio/wav", "audio/x-wav", "audio/mpeg", "audio/flac", "audio/ogg", "audio/mp4", "audio/m4a", "audio/x-m4a"}
 
 frontend_url = os.getenv("FRONTEND_URL", "http://127.0.0.1:3000") 
 domain = frontend_url.split("//")[-1].split(":")[0]  
