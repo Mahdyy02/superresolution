@@ -80,7 +80,7 @@ const AudioUploader = () => {
       const formData = new FormData();
       formData.append('file', file);
   
-      fetch(`${API_URL}//upload`, {
+      fetch(`${API_URL}/upload`, {
         method: 'POST',
         body: formData,
         credentials: 'include',
@@ -199,7 +199,7 @@ const AudioUploader = () => {
   
     try {
       console.log("Sending enhancement request to backend...");
-      const response = await fetch(`${API_URL}//enhance`, {
+      const response = await fetch(`${API_URL}/enhance`, {
         method: 'POST',
         body: formData,
         credentials: 'include',
