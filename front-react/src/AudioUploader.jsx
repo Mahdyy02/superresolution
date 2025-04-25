@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import WaveSurfer from 'wavesurfer.js';
 import './AudioUploader.css';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const AudioUploader = () => {
   const [audioFile, setAudioFile] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -20,7 +22,7 @@ const AudioUploader = () => {
   const [fileName, setFileName] = useState('');
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/init-session', {
+    fetch(`${API_URL}/init-session`, {
       method: 'GET',
       credentials: 'include',
     })
@@ -78,7 +80,7 @@ const AudioUploader = () => {
       const formData = new FormData();
       formData.append('file', file);
   
-      fetch('http://127.0.0.1:8000/upload', {
+      fetch(`${API_URL}//upload`, {
         method: 'POST',
         body: formData,
         credentials: 'include',
@@ -197,7 +199,7 @@ const AudioUploader = () => {
   
     try {
       console.log("Sending enhancement request to backend...");
-      const response = await fetch('http://127.0.0.1:8000/enhance', {
+      const response = await fetch(`${API_URL}//enhance`, {
         method: 'POST',
         body: formData,
         credentials: 'include',
@@ -217,8 +219,8 @@ const AudioUploader = () => {
         throw new Error("Incomplete response from server. Missing check_status_url or download_url.");
       }
   
-      const statusUrl = `http://127.0.0.1:8000${data.check_status_url}`;
-      const downloadUrl = `http://127.0.0.1:8000${data.download_url}`;
+      const statusUrl = `${API_URL}${data.check_status_url}`;
+      const downloadUrl = `${API_URL}${data.download_url}`;
   
       const checkStatus = async () => {
         const maxTries = 3000;
