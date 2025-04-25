@@ -115,7 +115,7 @@ const AudioUploader = () => {
         .then(res => res.json())
         .then(data => {
           console.log("Upload successful:", data);
-          setIsLoading(true);
+          setIsLoading(false);
         })
         .catch(err => {
           console.error("Upload failed:", err);
